@@ -2,7 +2,7 @@
 
 set -e
 
-cd docs
+cd ../docs
 
 npm run vuepress:build
 
