@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+html,
+body {
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+}
+
+h1 + p {
+  margin-top: 0 !important;
+}
+
+.table-tag {
+  line-height: 2 !important;
+  font-size: 14px;
+  padding: 4px 2px !important;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.language-html {
+  .token.tag > .token.tag {
+    color: rgb(255, 174, 0) !important;
+  }
+}
+
+.extra-class::before {
+  display: none;
+}
+
+table {
+  // Make tables span the full container width.
+  display: table;
+  width: 100%;
+  // Align all text to the left.
+  text-align: left;
+}
+
+div.prop_table {
+  table {
+    th:nth-of-type(3) {
+      width: 150px;
+    }
+    td:nth-of-type(3) {
+      width: 150px;
+    }
+  }
+}
+
+div.prop_table,
+div.event_table {
+  overflow-x: auto !important;
+  table {
+    width: 100%;
+    table-layout: fixed !important;
+    margin: 0;
+
+    @media screen and(max-width: 900px) {
+      display: unset !important;
+      table-layout: auto !important;
+    }
+
+    th {
+      padding: 16px 8px;
+    }
+
+    td {
+      padding: 8px;
+      vertical-align: baseline;
+    }
+  }
+}
+
+footer.page-edit,
+div.page-nav {
+  max-width: 1280px;
+}
+.theme-default-content:not(.custom) {
+  max-width: 1280px;
+  h1:first-child {
+    margin-top: 8px;
+  }
+  h2 {
+    border-bottom: none;
+    padding-top: 6rem;
+    margin-top: -3rem;
+    margin-bottom: 8px;
+  }
+}

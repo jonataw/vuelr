@@ -1,0 +1,21 @@
+{
+  "name": "vuelr-docs",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "vuepress:dev": "vuepress dev",
+    "vuepress:build": "vuepress build"
+  },
+  "devDependencies": {
+    "vue-class-component": "^7.2.6",
+    "vuepress": "^1.8.2",
+    "vuepress-plugin-typescript": "^0.3.1"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "dependencies": {
+    "@highlightjs/vue-plugin": "^1.0.2",
+    "codemirror": "^5.62.3"
+  }
+}
