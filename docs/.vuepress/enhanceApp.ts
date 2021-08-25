@@ -8,8 +8,6 @@ import Vuelr from '../../src/vuelr';
 import '../../src/style/vuelr.scss';
 import './styles/override.scss';
 
-import hljsVuePlugin from '@highlightjs/vue-plugin';
-
 export default ({
   Vue // the version of Vue being used in the VuePress app
 }: // options, // the options for the root Vue instance
@@ -19,9 +17,6 @@ export default ({
   Vue: any;
 }) => {
   // ...apply enhancements for the site.
-
-  Vue.use(hljsVuePlugin);
-
   Vue.use(Vuelr, {
     codemirror: {}
   });
