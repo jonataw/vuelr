@@ -8,7 +8,8 @@ import { VuelrConfig, VuelrInstance } from '../vuelr.d';
 export function createInstance(Vue: typeof _Vue, config?: DeepPartial<VuelrConfig>): VuelrInstance {
   const cfg = deepMerge(defaultConfig, config || {}) as VuelrConfig;
   return Vue.observable({
-    config: cfg
+    config: cfg,
+    uuidSequence: 0,
   });
 }
 

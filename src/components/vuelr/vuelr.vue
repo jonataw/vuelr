@@ -47,9 +47,9 @@ import needsTranspiler from '@/utils/needs-transpiler';
 import { VuelrConfig } from '@/vuelr.d';
 
 @Component({
-  name: 'Snip'
+  name: 'Vuelr'
 })
-export default class Snip extends Vue {
+export default class Vuelr extends Vue {
   @Prop({ type: String }) readonly value?: any;
   @Prop({ type: Boolean, default: false }) readonly keepData?: boolean;
 
@@ -61,9 +61,8 @@ export default class Snip extends Vue {
   @Prop({ type: Object }) readonly previewProps?: unknown; // Unused
   @Prop({ type: Object }) readonly errorProps?: unknown; // Unused
 
-  id = 'vuelr-' + (this as any)._uid;
-
   vm: Vue | null = null;
+  id: string;
   error: string | null = null;
   transpiler: (code: string) => string = (code: string) => code;
   iteration = 0; // Watcher immediate will set this to 1 instantly.
@@ -82,6 +81,15 @@ export default class Snip extends Vue {
 
   destroyed(): void {
     this.destroy();
+  }
+
+  createId(): number {
+    this.$vuelr.uuidSequence++;
+    return this.$vuelr.uuidSequence;
+  }
+
+  created(): void {
+    this.id = `vuelr-${this.createId()}`;
   }
 
   mounted(): void {

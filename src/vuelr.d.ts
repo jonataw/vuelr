@@ -23,6 +23,7 @@ export interface VuelrConfig {
 
 export interface VuelrInstance {
   readonly config: VuelrConfig;
+  uuidSequence: number;
 }
 
 // Prototype augments
