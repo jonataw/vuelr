@@ -72,9 +72,6 @@ export default class Snip extends Vue {
   compiledTemplate: string | null = null;
   compiledStyle: string | null = null;
 
-  messages: string[] = [];
-  logIdx = 0;
-
   readonly TEMPLATE_REGEXP = /<template>([\s\S]*)<\/template>/;
   readonly SCRIPT_REGEXP = /<script>([\s\S]*)<\/script>/;
   readonly STYLE_REGEXP = /<style>([\s\S]*)<\/style>/;
@@ -184,7 +181,6 @@ export default class Snip extends Vue {
       this.compiledScript = this.transpiler(';options = ' + js + ';');
     } catch (error) {
       this.compiledScript = null;
-      this.log(error, 'something went wrong');
       window.console.error('Error in javascript', error);
     }
   }
@@ -268,33 +264,6 @@ export default class Snip extends Vue {
 
   match(regex: RegExp, text: string): string {
     return (regex.exec(text) || [])[1];
-  }
-
-  log(tag: any, ...args: any) {
-    console.log(tag, args);
-    // We have to ignore props mutation warning due to a
-    // Vue.js bug when we have two instances
-    if (String(args[0]).indexOf('Avoid mutating a prop directly') !== -1) {
-      return;
-    }
-    const msg = args.map(String).join(' ');
-    if (
-      this.messages.length &&
-      msg.indexOf('Error in render') !== -1 &&
-      msg === this.messages[0][1]
-    ) {
-      // Prevent duplicate render error messages
-      return;
-    }
-    if (this.messages.length > 10) {
-      this.messages.splice(10);
-    }
-    this.messages.unshift([tag, msg, this.logIdx++] as any);
-  }
-
-  clear() {
-    this.logIdx = 1;
-    this.messages.splice(0);
   }
 }
 
