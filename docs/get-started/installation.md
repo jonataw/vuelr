@@ -5,10 +5,12 @@ To use Vuelr in your project, run the following command in your project folder:
 <SourceCode lang="sh">
 ```sh
 # NPM
-npm i vuelr
+npm i vuelr codemirror
 
 # Yarn
-yarn add vuelr
+yarn add vuelr codemirror
+
+# CodeMirror is only needed if you use the default editor.
 ```
 </SourceCode>
 

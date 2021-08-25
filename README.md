@@ -13,10 +13,12 @@ Visit the [documentation](https://jonataw.github.io/vuelr).
 
 ```sh
 # NPM
-npm i vuelr
+npm i vuelr codemirror
 
 # Yarn
-yarn add vuelr
+yarn add vuelr codemirror
+
+# CodeMirror is only needed if you use the default editor.
 ```
 
 Import Vuelr in your Vue entry file:
