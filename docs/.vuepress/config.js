@@ -55,10 +55,6 @@ module.exports = {
         link: '/get-started/installation'
       },
       {
-        text: 'Configuration',
-        link: '/configuration/default-configuration'
-      },
-      {
         text: 'Usage',
         link: '/usage/quickstart'
       }
