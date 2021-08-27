@@ -34,12 +34,6 @@ export default class Button extends Vue {
       // @ts-ignore
       await import('codemirror/lib/codemirror.css');
 
-      const theme = this.config.codemirror.theme;
-      if (theme && theme !== 'default') {
-        // @ts-ignore
-        await import(`codemirror/theme/${theme}.css`);
-      }
-
       const editor = CodeMirror.fromTextArea(
         this.$refs.textarea as HTMLTextAreaElement,
         { ...this.config.codemirror, readOnly: this.readonly }
