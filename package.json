@@ -37,6 +37,8 @@
     "build:cjs": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format cjs",
     "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
     "build:css": "node build/scss.js && sass ./dist:./dist",
+    "deploy-docs": "build/deploy-docs.sh",
+    "deploy-docs:win": ".\\build\\deploy-docs.sh",
     "publish:npm": "npm i && npm run build && npm publish"
   },
   "devDependencies": {
