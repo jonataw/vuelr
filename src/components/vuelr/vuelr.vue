@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="ready">
     <div v-if="$slots.default || $scopedSlots.default" class="vuelr vuelr-slot">
       <slot
         :id="id"
@@ -66,6 +66,7 @@ export default class Vuelr extends Vue {
   error: string | null = null;
   transpiler: (code: string) => string = (code: string) => code;
   iteration = 0; // Watcher immediate will set this to 1 instantly.
+  ready = false;
 
   compiledScript: string | null = null;
   compiledTemplate: string | null = null;
@@ -93,6 +94,9 @@ export default class Vuelr extends Vue {
   }
 
   mounted(): void {
+    if (this.$isServer) {
+      return;
+    }
     if (needsTranspiler) {
       this.$nextTick(() => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -101,11 +105,18 @@ export default class Vuelr extends Vue {
           '../../utils/transpile' /* webpackChunkName: "transpile" */
         ).then((module) => {
           this.transpiler = module.default || module;
-          this.addWatchers();
+
+          this.ready = true;
+          this.$nextTick(() => {
+            this.addWatchers();
+          });
         });
       });
     } else {
-      this.addWatchers();
+      this.ready = true;
+      this.$nextTick(() => {
+        this.addWatchers();
+      });
     }
   }
 
