@@ -48,7 +48,7 @@ module.exports = {
     nav: [
       {
         text: 'Demo',
-        link: '/demo'
+        link: '/'
       },
       {
         text: 'Get Started',
@@ -62,7 +62,7 @@ module.exports = {
     searchPlaceholder: 'Search...',
     sidebarDepth: 4,
     sidebar: [
-      '/demo',
+      '/',
       {
         title: 'Get Started',
         collapsable: false,

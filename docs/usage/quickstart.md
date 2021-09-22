@@ -1,6 +1,6 @@
 # Quickstart
 
-The following snippet will render a Vuelr component similar to the one found in [Demo](/demo).
+The following snippet will render a Vuelr component similar to the one found in [Demo](/).
 
 <SourceCode lang="Vue">
 ```html

@@ -2,7 +2,7 @@
 
 Live editing of Vue components.
 
-- [Demo](https://jonataw.github.io/vuelr/demo)
+- [Demo](https://jonataw.github.io/vuelr)
 - [Documentation](https://jonataw.github.io/vuelr)
 
 ## Documentation
