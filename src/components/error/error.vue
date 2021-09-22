@@ -9,6 +9,6 @@ import { Component, Prop, Vue } from '@/utils/decorators';
 
 @Component({ name: 'VuelrError' })
 export default class Button extends Vue {
-  @Prop({ type: String }) readonly error?: string | null;
+  @Prop({ type: String, default: null }) readonly error?: string | null;
 }
 </script>
