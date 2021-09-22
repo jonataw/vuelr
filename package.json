@@ -31,8 +31,6 @@
     "component"
   ],
   "scripts": {
-    "serve": "vue-cli-service serve dev/serve.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf dist/* && mkdirp dist && cross-env NODE_ENV=production rollup --config build/rollup.config.js && npm run build:css",
     "build:cjs": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format cjs",
     "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
