@@ -1,9 +1,9 @@
 # Vuelr
 
-Live editing of Vue components.
+Vuelr is a component for editing and previewing Vue components or templates in your browser in realtime.
 
 - [Demo](https://jonataw.github.io/vuelr)
-- [Documentation](https://jonataw.github.io/vuelr)
+- [Documentation](https://jonataw.github.io/vuelr/get-started/installation.html)
 
 ## Documentation
 
