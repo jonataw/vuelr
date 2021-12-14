@@ -1,14 +1,23 @@
 <template>
-  <div class="vuelr-preview">
-    <div :id="id" />
-  </div>
+  <div :class="`${config.className}-preview`" :id="id" />
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from '@/utils/decorators';
+import { defineComponent } from 'vue';
+import { useVuelr } from '../../composables/use-vuelr';
 
-@Component({ name: 'VuelrPreview' })
-export default class Preview extends Vue {
-  @Prop({ type: String }) readonly id!: string;
-}
+export const props = {
+  id: {
+    type: String
+  }
+};
+
+export default defineComponent({
+  name: 'VuelrPreview',
+  props,
+  setup(_props, _context) {
+    const { config } = useVuelr();
+    return { config };
+  }
+});
 </script>

@@ -1,14 +1,25 @@
 <template>
-  <div v-if="error" class="vuelr-error">
+  <div v-if="error" :class="`${config.className}-error`">
     <span v-text="error" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from '@/utils/decorators';
+import { defineComponent, PropType } from 'vue';
+import { useVuelr } from '../../composables/use-vuelr';
 
-@Component({ name: 'VuelrError' })
-export default class Button extends Vue {
-  @Prop({ type: String, default: null }) readonly error?: string | null;
-}
+export const props = {
+  error: {
+    type: String as PropType<string | null>
+  }
+};
+
+export default defineComponent({
+  name: 'VuelrError',
+  props,
+  setup(_props, _context) {
+    const { config } = useVuelr();
+    return { config };
+  }
+});
 </script>

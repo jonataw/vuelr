@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "outDir": "dist",
+    "baseUrl": ".",
     "target": "es2015",
     "module": "es2015",
     "strict": true,
@@ -12,21 +14,15 @@
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationMap": true,
     "sourceMap": true,
-    "baseUrl": ".",
     "types": [
       "node",
       "vue",
       "webpack-env"
     ],
-    "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "~/*": [
-        "dev/*"
-      ]
-    },
     "lib": [
       "esnext",
       "dom",
@@ -34,8 +30,12 @@
       "scripthost"
     ]
   },
+  "include": [
+    "src"
+  ],
   "exclude": [
     "node_modules",
-    "dist"
+    "**/*.spec.ts",
+    "tests"
   ]
 }

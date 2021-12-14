@@ -1,5 +1,5 @@
-.vuelr-editor {
-  &.vuelr-editor-loading {
+.#{c('editor')} {
+  &.#{c('editor')}-loading {
     opacity: 0;
   }
 }

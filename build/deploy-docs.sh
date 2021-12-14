@@ -2,11 +2,9 @@
 
 set -e
 
-cd docs
+npm run docs:build
 
-npm run vuepress:build
-
-cd .vuepress/dist
+cd docs/.vuepress/dist
 
 git init
 git add -A

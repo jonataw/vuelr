@@ -1,59 +1,71 @@
 <template>
-  <div class="vuelr-editor" :class="{ 'vuelr-editor-loading': !ready }">
-    <textarea ref="textarea" :value="value" @input="handleChange"></textarea>
+  <div
+    :class="[
+      `${config.className}-editor`,
+      { [`${config.className}-editor-loading`]: !ready }
+    ]"
+  >
+    <textarea ref="textarea" />
   </div>
 </template>
 
 <script lang="ts">
-// eslint-disable @typescript-eslint/ban-ts-comment
+import { defineComponent, onMounted, ref } from 'vue';
+import { useVuelr } from '../../composables/use-vuelr';
 
-import { Component, Prop, Vue } from '@/utils/decorators';
-import { VuelrConfig } from '@/vuelr.d';
-
-@Component({ name: 'VuelrEditor' })
-export default class Button extends Vue {
-  @Prop({ type: String }) readonly value?: any;
-  @Prop({ type: Boolean, default: false }) readonly readonly!: boolean;
-
-  ready = false;
-
-  get config(): VuelrConfig {
-    return this.$vuelr.config;
+export const props = {
+  modelValue: {
+    type: String
+  },
+  readonly: {
+    type: Boolean
   }
+};
 
-  async mounted(): Promise<void> {
-    let CodeMirror: any;
-    try {
-      // @ts-ignore
-      const module = await import('codemirror');
-      CodeMirror = module.default || module;
+export default defineComponent({
+  name: 'VuelrEditor',
+  props,
+  emits: ['change'],
+  setup(props, context) {
+    const { config } = useVuelr();
 
-      // @ts-ignore
-      await import('codemirror/mode/vue/vue');
+    const ready = ref(false);
+    const textarea = ref(null);
 
-      // @ts-ignore
-      await import('codemirror/lib/codemirror.css');
+    onMounted(async () => {
+      let CodeMirror: any;
+      try {
+        // @ts-ignore
+        const module = await import('codemirror');
+        CodeMirror = module.default || module;
 
-      const editor = CodeMirror.fromTextArea(
-        this.$refs.textarea as HTMLTextAreaElement,
-        { ...this.config.codemirror, readOnly: this.readonly }
-      );
+        // @ts-ignore
+        await import('codemirror/mode/vue/vue');
 
-      editor.setValue(this.value);
-      editor.on('change', () => this.$emit('input', editor.getValue()));
+        // @ts-ignore
+        await import('codemirror/lib/codemirror.css');
 
-      this.ready = true;
-    } catch (error) {
-      console.log(error);
-      console.error(
-        `Failed to load dependency 'codemirror'. Have you installed the dependency?\nnpm install codemirror`
-      );
-      return;
-    }
+        const editor = CodeMirror.fromTextArea(textarea.value, {
+          ...config.value.codemirror,
+          readOnly: props.readonly
+        });
+
+        editor.setValue(props.modelValue);
+        editor.on('change', () => {
+          context.emit('change', editor.getValue());
+        });
+
+        ready.value = true;
+      } catch (error) {
+        console.error(error);
+        console.error(
+          `Failed to load dependency 'codemirror'. Have you installed the dependency?\nnpm install codemirror`
+        );
+        return;
+      }
+    });
+
+    return { config, ready, textarea };
   }
-
-  handleChange(event: InputEvent): void {
-    this.$emit('input', (event.target as any).value);
-  }
-}
+});
 </script>

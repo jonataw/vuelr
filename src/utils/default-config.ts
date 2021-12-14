@@ -1,6 +1,5 @@
-import { VuelrConfig } from '../vuelr.d';
-
-const config: VuelrConfig = {
+const config = {
+  className: '__vuelr',
   debug: false,
   codemirror: {
     lineNumbers: true,

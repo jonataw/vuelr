@@ -385,3 +385,5 @@ Temporary Items
 =======
 
 dist
+.cache
+.temp

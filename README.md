@@ -2,8 +2,8 @@
 
 Vuelr is a component for editing and previewing Vue components or templates in your browser in realtime.
 
-- [Demo](https://jonataw.github.io/vuelr)
-- [Documentation](https://jonataw.github.io/vuelr/get-started/installation.html)
+- [Demo](https://jonataw.github.io/vuelr/getting-started/demo.html)
+- [Documentation](https://jonataw.github.io/vuelr)
 
 ## Documentation
 
@@ -23,22 +23,39 @@ yarn add vuelr codemirror
 
 Import Vuelr in your Vue entry file:
 
-```JavaScript
-import Vue from 'vue';
-import Vuelr from 'vuelr';
+```ts
+import { createApp } from 'vue';
+import { createVuelr, Vuelr } from 'vuelr';
 
-// CSS is only needed if you use the default editor, preview and error components.
-// If you use your own components, omit the CSS.
-// CSS:
-import 'vuelr/dist/style/vuelr.css';
-// Or Sass:
-import 'vuelr/dist/style/vuelr.scss';
+createApp(App)
+  .use(
+    createVuelr({
+      components: [Vuelr]
+    })
+  )
+  .mount('#app');
+```
 
-Vue.use(Vuelr);
+Import the `vuelr.scss` file with Sass:
 
-new Vue({
-  render: h => h(App)
-}).$mount('app');
+```scss
+@import 'vuelr/dist/theme/vuelr';
+```
+
+## Usage
+
+```vue
+<template>
+  <Vuelr v-model="code" />
+</template>
+
+<script>
+export default defineComponent({
+  setup() {
+    const code = ref('<template><p>Hello world!</p></template>');
+  }
+});
+</script>
 ```
 
 ## License

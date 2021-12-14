@@ -1,8 +1,11 @@
 <template>
-  <div v-if="ready">
-    <div v-if="$slots.default || $scopedSlots.default" class="vuelr vuelr-slot">
+  <div v-if="ready" :id="uid">
+    <div
+      v-if="hasSlot('default')"
+      :class="[config.className, `${config.className}-slot`]"
+    >
       <slot
-        :id="id"
+        :id="slotId"
         :error="error"
         :compiled="{
           script: compiledScript,
@@ -11,280 +14,280 @@
         }"
       />
     </div>
-    <div v-else class="vuelr">
+    <div v-else :class="config.className">
       <slot
-        v-if="$scopedSlots.preview"
+        v-if="hasSlot('preview')"
         name="preview"
-        :id="id"
+        :id="slotId"
         :compiled="{
           script: compiledScript,
           template: compiledTemplate,
           style: compiledStyle
         }"
       />
-      <VuelrPreview v-else :id="id" />
+      <VuelrPreview v-else :id="slotId" />
 
-      <slot v-if="$scopedSlots.error" name="error" :error="error" />
+      <slot v-if="hasSlot('error')" name="error" :error="error" />
       <VuelrError v-else :error="error" />
 
-      <slot v-if="$scopedSlots.editor" name="editor" />
+      <slot v-if="hasSlot('editor')" name="editor" />
       <VuelrEditor
         v-else
-        :value="value"
+        :model-value="modelValue"
         :readonly="editorProps && editorProps.readonly"
-        @input="(e) => $emit('input', e)"
+        @change="(e) => $emit('update:modelValue', e)"
       />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+import needsTranspiler from '../../utils/needs-transpiler';
+import {
+  defineComponent,
+  onMounted,
+  nextTick,
+  ref,
+  watch,
+  PropType,
+  getCurrentInstance
+} from 'vue';
 // @ts-ignore
-import _Vue from 'vue/dist/vue.common';
-import { Component, Prop, Vue } from '@/utils/decorators';
-import needsTranspiler from '@/utils/needs-transpiler';
-import { VuelrConfig } from '@/vuelr.d';
+import { createApp } from 'vue/dist/vue.esm-bundler';
 
-@Component({
-  name: 'Vuelr'
-})
-export default class Vuelr extends Vue {
-  @Prop({ type: String }) readonly value?: any;
-  @Prop({ type: Boolean, default: false }) readonly keepData?: boolean;
+import { useVuelr } from '../../composables/use-vuelr';
+import VuelrError from '../error';
+import VuelrPreview from '../preview';
+import VuelrEditor from '../editor';
 
-  @Prop({ type: Boolean, default: true }) readonly scoped!: boolean;
-  @Prop({ type: Boolean, default: false }) readonly debug!: boolean;
+export default defineComponent({
+  dependencies: { components: [VuelrError, VuelrPreview, VuelrEditor] },
+  name: 'Vuelr',
+  props: {
+    modelValue: {
+      type: String as PropType<string>,
+      required: true
+    },
+    scoped: {
+      type: Boolean,
+      default: true
+    },
+    editorProps: Object,
+    errorProps: Object,
+    previewProps: Object,
+    id: String
+  },
+  setup(props, _context) {
+    const { config } = useVuelr();
+    const instance = getCurrentInstance();
 
-  @Prop({ type: Object }) readonly editorProps?: { readonly: boolean };
+    const isServer = () => typeof window === 'undefined';
 
-  @Prop({ type: Object }) readonly previewProps?: unknown; // Unused
-  @Prop({ type: Object }) readonly errorProps?: unknown; // Unused
+    const ready = ref(false);
+    const error = ref<string | null>(null);
+    const iteration = ref(0);
+    let transpiler: any = (code: string) => code;
 
-  vm: Vue | null = null;
-  id: string;
-  error: string | null = null;
-  transpiler: (code: string) => string = (code: string) => code;
-  iteration = 0; // Watcher immediate will set this to 1 instantly.
-  ready = false;
+    const { uuid } = useVuelr();
+    const uid = props.id || `${config.value.className}-${uuid()}`;
+    const slotId = `${uid}-preview`;
 
-  compiledScript: string | null = null;
-  compiledTemplate: string | null = null;
-  compiledStyle: string | null = null;
+    const compiledScript = ref<string | null>(null);
+    const compiledTemplate = ref<string | null>(null);
+    const compiledStyle = ref<string | null>(null);
 
-  readonly TEMPLATE_REGEXP = /<template>([\s\S]*)<\/template>/;
-  readonly SCRIPT_REGEXP = /<script>([\s\S]*)<\/script>/;
-  readonly STYLE_REGEXP = /<style>([\s\S]*)<\/style>/;
+    const TEMPLATE_REGEXP = /<template>([\s\S]*)<\/template>/;
+    const SCRIPT_REGEXP = /<script>([\s\S]*)<\/script>/;
+    const STYLE_REGEXP = /<style>([\s\S]*)<\/style>/;
 
-  get config(): VuelrConfig {
-    return this.$vuelr.config;
-  }
-
-  destroyed(): void {
-    this.destroy();
-  }
-
-  createId(): number {
-    this.$vuelr.uuidSequence++;
-    return this.$vuelr.uuidSequence;
-  }
-
-  created(): void {
-    this.id = `vuelr-${this.createId()}`;
-  }
-
-  mounted(): void {
-    if (this.$isServer) {
-      return;
-    }
-    if (needsTranspiler) {
-      this.$nextTick(() => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        import(
-          '../../utils/transpile' /* webpackChunkName: "transpile" */
-        ).then((module) => {
-          this.transpiler = module.default || module;
-
-          this.ready = true;
-          this.$nextTick(() => {
-            this.addWatchers();
-          });
-        });
-      });
-    } else {
-      this.ready = true;
-      this.$nextTick(() => {
-        this.addWatchers();
-      });
-    }
-  }
-
-  addWatchers(): void {
-    this.$watch('value', this.onUpdate, { immediate: true });
-  }
-
-  onUpdate(): void {
-    this.iteration++;
-    this.error = null;
-    this.transpile();
-    this.style();
-    this.refresh();
-  }
-
-  style(): void {
-    const rootElement = document.getElementById(this.id);
-    if (!rootElement) {
-      return;
-    }
-
-    let styleElement;
-    styleElement = rootElement.getElementsByClassName('vuelr-style')[0];
-    if (styleElement) {
-      // Style element already exists. Remove content of it.
-      styleElement.innerHTML = '';
-    } else {
-      // Create the style element.
-      styleElement = document.createElement('div');
-      styleElement.classList.add('vuelr-style');
-
-      // Add style element to root element.
-      rootElement.appendChild(styleElement);
-    }
-
-    const dom = document.createElement('div');
-    dom.innerHTML = this.value;
-    const styles = Array.prototype.slice
-      .call(dom.querySelectorAll('style'))
-      .map((n) => n.innerHTML);
-
-    this.compiledStyle = styles ? styles.join(' ') : '';
-
-    if (this.scoped) {
-      this.compiledStyle = this.addStyleScope(this.compiledStyle, this.id);
-    }
-
-    if (this.compiledStyle) {
-      const holder = document.createElement('style');
-      holder.innerText = minimizeData(this.compiledStyle);
-      if (styleElement) {
-        styleElement.appendChild(holder);
-      }
-    }
-  }
-
-  addStyleScope(style: string, scope: string): string {
-    if (!scope) {
-      return style;
-    }
-    const regex = /(^|\})\s*([^{]+)/g;
-    return style.trim().replace(regex, (_m, g1, g2) => {
-      return g1 ? `${g1} #${scope} ${g2}` : `#${scope} ${g2}`;
-    });
-  }
-
-  transpile(): void {
-    let js = (this.match(this.SCRIPT_REGEXP, this.value) || '').trim();
-
-    if (!js) {
-      this.compiledScript = null;
-      return;
-    }
-
-    // Remove "export default".
-    if (js.includes('export default')) {
-      js = js.replace('export default', '');
-    }
-
-    try {
-      this.compiledScript = this.transpiler(';options = ' + js + ';');
-    } catch (error) {
-      this.compiledScript = null;
-      window.console.error('Error in javascript', error);
-    }
-  }
-
-  refresh(): void {
-    this.destroy();
-    const js = this.compiledScript;
-    let html = (this.match(this.TEMPLATE_REGEXP, this.value) || '').trim();
-
-    if (!html) {
-      // <template> tags not found... Strip all script and style tags!
-      html = this.value;
-
-      while (this.SCRIPT_REGEXP.test(html)) {
-        html = html.replace(this.SCRIPT_REGEXP, '');
-      }
-      while (this.STYLE_REGEXP.test(html)) {
-        html = html.replace(this.STYLE_REGEXP, '');
-      }
-    }
-
-    let options: any = {};
-
-    try {
-      eval(`var console = this.console; ${js}`);
-    } catch (error) {
-      this.error = error;
-      return;
-    }
-
-    if (!options.render) {
-      options.template = `<div class="vuelr-dynamic">${
-        options.template || html
-      }</div>`;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    try {
-      const rootElement = document.getElementById(this.id);
-      if (!rootElement) {
-        this.error = `Unable to render component. Element with id '${this.id}' not found in DOM.`;
+    onMounted(() => {
+      if (isServer()) {
         return;
       }
-      const dynamic = document.createElement('div');
-      rootElement.appendChild(dynamic);
-      this.vm = new _Vue({
-        ...options,
-        el: dynamic,
-        parent: new _Vue({
-          errorCaptured(error: any, _vm: any, info: any) {
-            // https://vuejs.org/v2/api/#errorCaptured
-            // Pass error to playground error handler
-            console.error(error, info);
-            // playground.errHandler(err, info);
-            // Don't propagate to parent/global error handler!
-            return false;
-          },
-          template: '<span></span>'
-        })
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  destroy(): void {
-    try {
-      const vm = this.vm;
-      if (vm) {
-        const parent = vm.$parent;
-        vm.$destroy();
-        vm.$el.parentNode?.removeChild(vm.$el);
-        vm.$el.innerHTML = '';
-        parent.$destroy();
+      if (needsTranspiler) {
+        nextTick(() => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          // import(
+          //   '../../utils/transpile' /* webpackChunkName: "transpile" */
+          // ).then((module) => {
+          //   transpiler = module.default || module;
+          //   ready.value = true;
+          //   nextTick(() => {
+          //     addWatchers();
+          //   });
+          // });
+        });
+      } else {
+        ready.value = true;
+        nextTick(() => {
+          addWatchers();
+        });
       }
-      this.vm = null;
-    } catch (error) {
-      console.warn(error);
-    }
-  }
+    });
 
-  match(regex: RegExp, text: string): string {
-    return (regex.exec(text) || [])[1];
+    const addWatchers = (): void => {
+      watch(() => [props.modelValue], update, { immediate: true });
+    };
+
+    const update = (): void => {
+      iteration.value++;
+      error.value = null;
+      transpile();
+      createStyle();
+      refresh();
+    };
+
+    const match = (regex: RegExp, text: string): string => {
+      return (regex.exec(text) || [])[1];
+    };
+
+    const transpile = () => {
+      let js = (match(SCRIPT_REGEXP, props.modelValue) || '').trim();
+      if (!js) {
+        compiledScript.value = null;
+        return;
+      }
+      // Remove "export default".
+      if (js.includes('export default')) {
+        js = js.replace('export default', '');
+      }
+      try {
+        compiledScript.value = transpiler(';options = ' + js + ';');
+      } catch (error) {
+        compiledScript.value = null;
+        window.console.error('Error in javascript', error);
+      }
+    };
+
+    const createStyle = () => {
+      const addStyleScope = (style: string, scope: string): string => {
+        if (!scope) {
+          return style;
+        }
+        const regex = /(^|\})\s*([^{]+)/g;
+        return style.trim().replace(regex, (_m, g1, g2) => {
+          return g1 ? `${g1} #${scope} ${g2}` : `#${scope} ${g2}`;
+        });
+      };
+
+      const rootElement = document.getElementById(uid);
+      if (!rootElement) {
+        return;
+      }
+      let styleElement;
+      styleElement = rootElement.getElementsByClassName(
+        `${config.value.className}-style`
+      )[0];
+      if (styleElement) {
+        // Style element already exists. Remove content of it.
+        styleElement.innerHTML = '';
+      } else {
+        // Create the style element.
+        styleElement = document.createElement('div');
+        styleElement.classList.add(`${config.value.className}-style`);
+        // Add style element to root element.
+        rootElement.appendChild(styleElement);
+      }
+      const dom = document.createElement('div');
+      dom.innerHTML = props.modelValue;
+      const styles = Array.prototype.slice
+        .call(dom.querySelectorAll('style'))
+        .map((n) => n.innerHTML);
+      compiledStyle.value = styles ? styles.join(' ') : '';
+      if (props.scoped) {
+        compiledStyle.value = addStyleScope(
+          compiledStyle.value,
+          uid + ` .${config.value.className}-preview`
+        );
+      }
+      if (compiledStyle.value) {
+        const holder = document.createElement('style');
+        holder.innerText = minimizeData(compiledStyle.value);
+        if (styleElement) {
+          styleElement.appendChild(holder);
+        }
+      }
+    };
+
+    const destroy = (): void => {
+      try {
+        const rootElement = document.getElementById(uid);
+        if (rootElement) {
+          const dynamic = rootElement.getElementsByClassName(
+            `${config.value.className}-dynamic`
+          )[0];
+          if (dynamic) {
+            dynamic.remove();
+          }
+        }
+      } catch (error) {
+        console.warn(error);
+      }
+    };
+
+    const refresh = (): void => {
+      destroy();
+      const js = compiledScript.value;
+      let html = (match(TEMPLATE_REGEXP, props.modelValue) || '').trim();
+      if (!html) {
+        // <template> tags not found... Strip all script and style tags!
+        html = props.modelValue;
+        while (SCRIPT_REGEXP.test(html)) {
+          html = html.replace(SCRIPT_REGEXP, '');
+        }
+        while (STYLE_REGEXP.test(html)) {
+          html = html.replace(STYLE_REGEXP, '');
+        }
+      }
+      let options: any = {};
+      try {
+        eval(`${js}`);
+      } catch (_error) {
+        error.value = _error as any;
+        return;
+      }
+      if (!options.render) {
+        options.template = `${options.template || html}`;
+      }
+      try {
+        const rootElement = document.getElementById(`${uid}-preview`);
+        if (!rootElement) {
+          error.value = `Unable to render component. Element with id '${uid}' not found in DOM.`;
+          return;
+        }
+        const dynamic = document.createElement('div');
+        rootElement.appendChild(dynamic);
+        dynamic.className = `${config.value.className}-dynamic`;
+
+        const app = createApp(defineComponent({ ...options }), {});
+        Object.entries(instance?.appContext.components).forEach(([a, b]) => {
+          app.component(a, b);
+        });
+
+        app.mount(dynamic);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const hasSlot = (name: string) => {
+      return instance && instance.slots[name];
+    };
+
+    return {
+      ready,
+      uid,
+      compiledStyle,
+      compiledScript,
+      compiledTemplate,
+      hasSlot,
+      error,
+      config,
+      slotId
+    };
   }
-}
+});
 
 function minimizeData(_content: string) {
   var content = _content;

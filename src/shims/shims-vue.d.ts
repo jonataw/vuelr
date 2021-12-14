@@ -1,9 +1,5 @@
-//shims-vue.d.ts
-
 declare module '*.vue' {
-  import Vue, { VueConstructor } from 'vue';
-  const component: VueConstructor & {
-    install(vue: typeof Vue): void;
-  };
+  import type { DefineComponent } from 'vue';
+  const component: DefineComponent<any, any, any>;
   export default component;
 }

@@ -1,3 +1,9 @@
+$vuelr-class-name: '__vuelr' !default;
+
+@function c($key) {
+  @return $vuelr-class-name + '-' + $key;
+}
+
 @import '../components/error/error';
 @import '../components/editor/editor';
 @import '../components/preview/preview';
