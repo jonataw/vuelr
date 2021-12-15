@@ -15,34 +15,18 @@
       />
     </div>
     <div v-else :class="config.className">
-      <slot
-        v-if="hasSlot('preview')"
-        name="preview"
-        :id="slotId"
-        :compiled="{
-          script: compiledScript,
-          template: compiledTemplate,
-          style: compiledStyle
-        }"
-      />
-      <VuelrPreview v-else :id="slotId" />
-
-      <slot v-if="hasSlot('error')" name="error" :error="error" />
-      <VuelrError v-else :error="error" />
-
-      <slot v-if="hasSlot('editor')" name="editor" />
-      <VuelrEditor
-        v-else
-        :model-value="modelValue"
+      <div :id="slotId" />
+      <div v-if="error" v-text="error" />
+      <textarea
+        v-model="modelValue"
         :readonly="editorProps && editorProps.readonly"
-        @change="(e) => $emit('update:modelValue', e)"
+        @input="$emit('update:modelValue', $event.target?.value)"
       />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import needsTranspiler from '../../utils/needs-transpiler';
 import {
   defineComponent,
   onMounted,
@@ -56,12 +40,8 @@ import {
 import { createApp } from 'vue/dist/vue.esm-bundler';
 
 import { useVuelr } from '../../composables/use-vuelr';
-import VuelrError from '../error';
-import VuelrPreview from '../preview';
-import VuelrEditor from '../editor';
 
 export default defineComponent({
-  dependencies: { components: [VuelrError, VuelrPreview, VuelrEditor] },
   name: 'Vuelr',
   props: {
     modelValue: {
@@ -101,34 +81,12 @@ export default defineComponent({
     const STYLE_REGEXP = /<style>([\s\S]*)<\/style>/;
 
     onMounted(() => {
-      if (isServer()) {
-        return;
-      }
-      if (needsTranspiler) {
-        nextTick(() => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          // import(
-          //   '../../utils/transpile' /* webpackChunkName: "transpile" */
-          // ).then((module) => {
-          //   transpiler = module.default || module;
-          //   ready.value = true;
-          //   nextTick(() => {
-          //     addWatchers();
-          //   });
-          // });
-        });
-      } else {
-        ready.value = true;
-        nextTick(() => {
-          addWatchers();
-        });
-      }
+      if (isServer()) return;
+      ready.value = true;
+      nextTick(() => {
+        watch(() => [props.modelValue], update, { immediate: true });
+      });
     });
-
-    const addWatchers = (): void => {
-      watch(() => [props.modelValue], update, { immediate: true });
-    };
 
     const update = (): void => {
       iteration.value++;

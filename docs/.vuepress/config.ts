@@ -21,23 +21,15 @@ export default defineUserConfig<DefaultThemeOptions>({
           {
             text: 'Getting Started',
             children: [
-              '/getting-started/introduction.md',
+              '/getting-started/installation.md',
               '/getting-started/demo.md',
-              '/getting-started/nuxt.md'
+              '/getting-started/nuxt.md',
+              '/getting-started/usage.md'
             ]
           },
           {
             text: 'Configuration',
             children: ['/configuration/global-configuration.md']
-          },
-          {
-            text: 'Components',
-            children: [
-              '/components/vuelr.md',
-              '/components/editor.md',
-              '/components/preview.md',
-              '/components/error.md'
-            ]
           }
         ]
       }
