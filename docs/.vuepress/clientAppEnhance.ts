@@ -10,9 +10,9 @@ export default defineClientAppEnhance(({ app, router }) => {
     redirect: '/getting-started/introduction.html'
   });
 
-  app.component("A", A);
-  app.component("T", T);
-  app.component("ExampleCodeMirror", ExampleCodeMirror);
+  app.component('A', A);
+  app.component('T', T);
+  app.component('ExampleCodeMirror', ExampleCodeMirror);
 
   app.use(
     createVuelr({

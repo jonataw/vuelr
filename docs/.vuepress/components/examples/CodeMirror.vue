@@ -9,9 +9,6 @@
 
 <script>
 import { defineComponent, nextTick, onMounted, ref } from 'vue';
-import CodeMirror from 'codemirror';
-import 'codemirror/mode/vue/vue';
-import 'codemirror/lib/codemirror.css';
 
 export default defineComponent({
   props: { name: String },
@@ -40,7 +37,13 @@ h5 {
 </style>`);
 
     onMounted(() => {
-      nextTick(() => {
+      nextTick(async () => {
+        const module = await import('codemirror');
+        await import('codemirror/mode/vue/vue');
+        await import('codemirror/lib/codemirror.css');
+
+        const CodeMirror = module.default || module;
+
         const codemirror = CodeMirror(document.getElementById('codemirror'), {
           lineNumbers: true,
           value: code.value,
