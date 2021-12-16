@@ -1,24 +1,18 @@
 # Vuelr
 
-Vuelr is a component for editing and previewing Vue components or templates in your browser in realtime.
+Vuelr is a component for live rendering Vue.js components and templates in the browser.
 
-- [Demo](https://jonataw.github.io/vuelr/getting-started/demo.html)
+- [Demo](https://jonataw.github.io/vuelr/demo.html)
 - [Documentation](https://jonataw.github.io/vuelr)
-
-## Documentation
-
-Visit the [documentation](https://jonataw.github.io/vuelr).
 
 ## Installation
 
 ```sh
 # NPM
-npm i vuelr codemirror
+npm i vuelr
 
 # Yarn
-yarn add vuelr codemirror
-
-# CodeMirror is only needed if you use the default editor.
+yarn add vuelr
 ```
 
 Import Vuelr in your Vue entry file:
@@ -36,23 +30,26 @@ createApp(App)
   .mount('#app');
 ```
 
-Import the `vuelr.scss` file with Sass:
-
-```scss
-@import 'vuelr/dist/theme/vuelr';
-```
-
 ## Usage
+
+Please visit the [Documentation](https://jonataw.github.io/vuelr) for more comprehensive instructions.
+
+Below is a basic example to check if your Vuelr installation is working:
 
 ```vue
 <template>
-  <Vuelr v-model="code" />
+  <Vuelr :code="code" v-slot="{ target }">
+    <div :id="target" />
+    <textarea v-model="code" />
+  </Vuelr>
 </template>
 
-<script>
+<script lang="ts">
 export default defineComponent({
   setup() {
-    const code = ref('<template><p>Hello world!</p></template>');
+    return {
+      code: ref('<p>Hello world!</p>')
+    };
   }
 });
 </script>

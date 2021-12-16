@@ -7,7 +7,7 @@ export default defineUserConfig<DefaultThemeOptions>({
     '/': {
       lang: 'en-US',
       title: 'Vuelr',
-      description: 'Vue-powered Static Site Generator'
+      description: 'Vuelr is a component for live rendering Vue.js components and templates in the browser.'
     }
   },
 
@@ -19,17 +19,20 @@ export default defineUserConfig<DefaultThemeOptions>({
       '/': {
         sidebar: [
           {
+            text: 'Demo',
+            link: '/demo.md'
+          },
+          {
             text: 'Getting Started',
             children: [
+              '/getting-started/introduction.md',
               '/getting-started/installation.md',
-              '/getting-started/demo.md',
-              '/getting-started/nuxt.md',
               '/getting-started/usage.md'
             ]
           },
           {
-            text: 'Configuration',
-            children: ['/configuration/global-configuration.md']
+            text: 'Advanced',
+            children: ['/advanced/configuration.md']
           }
         ]
       }

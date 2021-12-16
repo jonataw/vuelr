@@ -1,4 +1,8 @@
-# Global Configuration
+# Configuration
+
+:::warning
+This page is not complete.
+:::
 
 `createVuelr` allows you to pass options to Vuelr.
 
