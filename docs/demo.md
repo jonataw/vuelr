@@ -2,4 +2,4 @@
 
 Try editing the code below and see the preview above change in real-time!
 
-<ExampleCodeMirror id="demo" />
+<ExampleCodeMirror id="codemirror-demo" />
