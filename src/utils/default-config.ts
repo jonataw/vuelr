@@ -1,11 +1,11 @@
 const config = {
-  className: '__vuelr',
   debug: false,
-  codemirror: {
-    lineNumbers: true,
-    mode: 'text/x-vue',
-    tabSize: 2
-  }
+  classNames: {
+    target: 'target',
+    editor: 'editor',
+    style: 'style',
+    error: 'error'
+  },
 };
 
 export default config;

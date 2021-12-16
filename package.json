@@ -49,6 +49,7 @@
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^9.1.0",
     "chalk": "^4.1.2",
+    "codemirror": "^5.64.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.0.0",
     "eslint-plugin-prettier": "^3.3.1",

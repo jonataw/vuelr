@@ -16,7 +16,6 @@
     "allowSyntheticDefaultImports": true,
     "emitDeclarationOnly": true,
     "declaration": true,
-    "declarationMap": true,
     "sourceMap": true,
     "types": [
       "node",

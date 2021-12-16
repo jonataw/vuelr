@@ -8,19 +8,11 @@ class Vuelr {
     this.config = ref(
       deepMerge(defaultConfig, options.config || {}) as VuelrConfig
     );
-    this.uuidSequence = ref(0);
   }
   readonly config: Ref<VuelrConfig>;
 
-  uuidSequence: Ref<number>;
-
-  get isServer() {
-    return typeof document === 'undefined';
-  }
-
-  uuid(): number {
-    this.uuidSequence.value++;
-    return this.uuidSequence.value;
+  uuid(): string {
+    return '__v' + (Math.random().toString(36) + '00000000000000000').slice(2, 9);
   }
 }
 

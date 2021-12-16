@@ -1,28 +1,28 @@
 <template>
-  <div v-if="ready" :id="uid">
-    <div
-      v-if="hasSlot('default')"
-      :class="[config.className, `${config.className}-slot`]"
-    >
-      <slot
-        :id="slotId"
-        :error="error"
-        :compiled="{
-          script: compiledScript,
-          template: compiledTemplate,
-          style: compiledStyle
-        }"
-      />
-    </div>
-    <div v-else :class="config.className">
-      <div :id="slotId" />
-      <div v-if="error" v-text="error" />
-      <textarea
-        v-model="modelValue"
-        :readonly="editorProps && editorProps.readonly"
-        @input="$emit('update:modelValue', $event.target?.value)"
-      />
-    </div>
+  <div
+    v-if="ready && hasSlot('default')"
+    :id="target"
+    :class="`${target}-slot`"
+  >
+    <slot
+      :target="TARGET_ID"
+      :iteration="iteration"
+      :error="error"
+      :compiled="{
+        script: compiledScript,
+        template: compiledTemplate,
+        style: compiledStyle
+      }"
+    />
+  </div>
+  <div v-else-if="ready" :id="target">
+    <div :id="TARGET_ID" />
+    <div v-if="error" v-text="error" />
+    <textarea
+      :id="EDITOR_ID"
+      v-model="modelValue"
+      @input="$emit('update:modelValue', $event.target?.value)"
+    />
   </div>
 </template>
 
@@ -34,7 +34,8 @@ import {
   ref,
   watch,
   PropType,
-  getCurrentInstance
+  getCurrentInstance,
+  computed
 } from 'vue';
 // @ts-ignore
 import { createApp } from 'vue/dist/vue.esm-bundler';
@@ -44,21 +45,20 @@ import { useVuelr } from '../../composables/use-vuelr';
 export default defineComponent({
   name: 'Vuelr',
   props: {
+    id: String,
     modelValue: {
-      type: String as PropType<string>,
-      required: true
+      type: String as PropType<string>
+    },
+    code: {
+      type: String as PropType<string>
     },
     scoped: {
       type: Boolean,
       default: true
-    },
-    editorProps: Object,
-    errorProps: Object,
-    previewProps: Object,
-    id: String
+    }
   },
   setup(props, _context) {
-    const { config } = useVuelr();
+    const { config, uuid } = useVuelr();
     const instance = getCurrentInstance();
 
     const isServer = () => typeof window === 'undefined';
@@ -66,56 +66,66 @@ export default defineComponent({
     const ready = ref(false);
     const error = ref<string | null>(null);
     const iteration = ref(0);
-    let transpiler: any = (code: string) => code;
-
-    const { uuid } = useVuelr();
-    const uid = props.id || `${config.value.className}-${uuid()}`;
-    const slotId = `${uid}-preview`;
+    const target = props.id || uuid();
 
     const compiledScript = ref<string | null>(null);
     const compiledTemplate = ref<string | null>(null);
     const compiledStyle = ref<string | null>(null);
 
+    let app: any;
+
     const TEMPLATE_REGEXP = /<template>([\s\S]*)<\/template>/;
     const SCRIPT_REGEXP = /<script>([\s\S]*)<\/script>/;
     const STYLE_REGEXP = /<style>([\s\S]*)<\/style>/;
+
+    const parseConfig = () => {
+      const classNames = config.value.classNames;
+      const TARGET_ID = `${target}-${classNames.target}`;
+      const EDITOR_ID = `${target}-${classNames.editor}`;
+      const STYLE_ID = `${target}-${classNames.style}`;
+      const ERROR_ID = `${target}-${classNames.error}`;
+
+      return {
+        TARGET_ID,
+        EDITOR_ID,
+        STYLE_ID,
+        ERROR_ID
+      };
+    };
+
+    const code = computed<string>(
+      () => props.code || (props.modelValue as string)
+    );
+
+    const { TARGET_ID, EDITOR_ID, STYLE_ID, ERROR_ID } = parseConfig();
+
+    const match = (regex: RegExp, text: string): string => {
+      return (regex.exec(text) || [])[1];
+    };
 
     onMounted(() => {
       if (isServer()) return;
       ready.value = true;
       nextTick(() => {
-        watch(() => [props.modelValue], update, { immediate: true });
+        watch(() => [code.value], update, { immediate: true });
       });
     });
 
     const update = (): void => {
       iteration.value++;
       error.value = null;
-      transpile();
+      createScript();
       createStyle();
-      refresh();
+      render();
     };
 
-    const match = (regex: RegExp, text: string): string => {
-      return (regex.exec(text) || [])[1];
-    };
-
-    const transpile = () => {
-      let js = (match(SCRIPT_REGEXP, props.modelValue) || '').trim();
+    const createScript = () => {
+      let js = (match(SCRIPT_REGEXP, code.value) || '').trim();
       if (!js) {
-        compiledScript.value = null;
-        return;
+        return (compiledScript.value = null);
       }
-      // Remove "export default".
-      if (js.includes('export default')) {
-        js = js.replace('export default', '');
-      }
-      try {
-        compiledScript.value = transpiler(';options = ' + js + ';');
-      } catch (error) {
-        compiledScript.value = null;
-        window.console.error('Error in javascript', error);
-      }
+      js = (';options = ' + js + ';').replace('export default', '');
+      compiledScript.value = js;
     };
 
     const createStyle = () => {
@@ -129,68 +139,46 @@ export default defineComponent({
         });
       };
 
-      const rootElement = document.getElementById(uid);
-      if (!rootElement) {
+      const root = document.getElementById(target);
+      if (!root) {
         return;
       }
-      let styleElement;
-      styleElement = rootElement.getElementsByClassName(
-        `${config.value.className}-style`
-      )[0];
+      let styleElement = document.getElementById(STYLE_ID);
       if (styleElement) {
         // Style element already exists. Remove content of it.
         styleElement.innerHTML = '';
       } else {
         // Create the style element.
         styleElement = document.createElement('div');
-        styleElement.classList.add(`${config.value.className}-style`);
+        styleElement.id = STYLE_ID;
+        styleElement.style = 'display: none; position: fixed; top: 0; left: 0;';
         // Add style element to root element.
-        rootElement.appendChild(styleElement);
+        root.appendChild(styleElement);
       }
       const dom = document.createElement('div');
-      dom.innerHTML = props.modelValue;
+      dom.innerHTML = code.value;
       const styles = Array.prototype.slice
         .call(dom.querySelectorAll('style'))
         .map((n) => n.innerHTML);
-      compiledStyle.value = styles ? styles.join(' ') : '';
+
+      let style = styles ? styles.join(' ') : '';
+
       if (props.scoped) {
-        compiledStyle.value = addStyleScope(
-          compiledStyle.value,
-          uid + ` .${config.value.className}-preview`
-        );
+        style = addStyleScope(style, target + ` #${TARGET_ID}`);
       }
-      if (compiledStyle.value) {
+      if (style) {
         const holder = document.createElement('style');
-        holder.innerText = minimizeData(compiledStyle.value);
-        if (styleElement) {
-          styleElement.appendChild(holder);
-        }
+        holder.innerText = minifyCSS(style);
+        styleElement.appendChild(holder);
       }
     };
 
-    const destroy = (): void => {
-      try {
-        const rootElement = document.getElementById(uid);
-        if (rootElement) {
-          const dynamic = rootElement.getElementsByClassName(
-            `${config.value.className}-dynamic`
-          )[0];
-          if (dynamic) {
-            dynamic.remove();
-          }
-        }
-      } catch (error) {
-        console.warn(error);
-      }
-    };
-
-    const refresh = (): void => {
-      destroy();
+    const render = (): void => {
       const js = compiledScript.value;
-      let html = (match(TEMPLATE_REGEXP, props.modelValue) || '').trim();
+      let html = (match(TEMPLATE_REGEXP, code.value) || '').trim();
       if (!html) {
         // <template> tags not found... Strip all script and style tags!
-        html = props.modelValue;
+        html = code.value;
         while (SCRIPT_REGEXP.test(html)) {
           html = html.replace(SCRIPT_REGEXP, '');
         }
@@ -209,21 +197,35 @@ export default defineComponent({
         options.template = `${options.template || html}`;
       }
       try {
-        const rootElement = document.getElementById(`${uid}-preview`);
-        if (!rootElement) {
-          error.value = `Unable to render component. Element with id '${uid}' not found in DOM.`;
+        if (app) {
+          app.unmount();
+        }
+
+        const el = document.getElementById(TARGET_ID);
+        if (!el) {
+          error.value = `Unable to render component. Element with id '${target}' not found in DOM.`;
           return;
         }
-        const dynamic = document.createElement('div');
-        rootElement.appendChild(dynamic);
-        dynamic.className = `${config.value.className}-dynamic`;
+        el.id = TARGET_ID;
 
-        const app = createApp(defineComponent({ ...options }), {});
-        Object.entries(instance?.appContext.components).forEach(([a, b]) => {
-          app.component(a, b);
-        });
+        app = createApp(defineComponent({ ...options }), {});
 
-        app.mount(dynamic);
+        // Install inherited components.
+        Object.entries(instance?.appContext.components || {}).forEach(
+          ([name, component]) => {
+            app.component(name, component);
+          }
+        );
+
+        // Install inherited directives.
+        Object.entries(instance?.appContext.directives || {}).forEach(
+          ([name, directive]) => {
+            app.component(name, directive);
+          }
+        );
+
+        // Mount the component.
+        app.mount(el);
       } catch (error) {
         console.error(error);
       }
@@ -233,30 +235,33 @@ export default defineComponent({
       return instance && instance.slots[name];
     };
 
+    const minifyCSS = (style: string) => {
+      let content = style;
+      content = content.replace(/\/\*(?:(?!\*\/)[\s\S])*\*\/|[\r\n\t]+/g, '');
+      // now all comments, newlines and tabs have been removed
+      content = content.replace(/ {2,}/g, ' ');
+      // now there are no more than single adjacent spaces left
+      // now unnecessary: content = content.replace( /(\s)+\./g, ' .' );
+      content = content.replace(/ ([{:}]) /g, '$1');
+      content = content.replace(/([;,]) /g, '$1');
+      content = content.replace(/ !/g, '!');
+      return content;
+    };
+
     return {
       ready,
-      uid,
+      target,
       compiledStyle,
       compiledScript,
       compiledTemplate,
       hasSlot,
       error,
       config,
-      slotId
+      iteration,
+      EDITOR_ID,
+      TARGET_ID,
+      ERROR_ID
     };
   }
 });
-
-function minimizeData(_content: string) {
-  var content = _content;
-  content = content.replace(/\/\*(?:(?!\*\/)[\s\S])*\*\/|[\r\n\t]+/g, '');
-  // now all comments, newlines and tabs have been removed
-  content = content.replace(/ {2,}/g, ' ');
-  // now there are no more than single adjacent spaces left
-  // now unnecessary: content = content.replace( /(\s)+\./g, ' .' );
-  content = content.replace(/ ([{:}]) /g, '$1');
-  content = content.replace(/([;,]) /g, '$1');
-  content = content.replace(/ !/g, '!');
-  return content;
-}
 </script>
