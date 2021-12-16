@@ -2,7 +2,7 @@
   <Vuelr :code="code" v-slot="{ target }">
     <div class="codemirror-example">
       <div :id="target" class="preview" />
-      <div id="codemirror"></div>
+      <div :id="id"></div>
     </div>
   </Vuelr>
 </template>
@@ -11,8 +11,8 @@
 import { defineComponent, nextTick, onMounted, ref } from 'vue';
 
 export default defineComponent({
-  props: { name: String },
-  setup() {
+  props: { id: String },
+  setup(props, _context) {
     const code = ref(`<template>
   <div>
     <h5>Hello {{name}}!</h5>
@@ -44,7 +44,7 @@ h5 {
 
         const CodeMirror = module.default || module;
 
-        const codemirror = CodeMirror(document.getElementById('codemirror'), {
+        const codemirror = CodeMirror(document.getElementById(props.id), {
           lineNumbers: true,
           value: code.value,
           mode: 'text/x-vue'

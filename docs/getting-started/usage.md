@@ -36,7 +36,7 @@ It's now up to you to add this using the [slots](#slots) Vuelr exposes. When you
 
 The example below uses [CodeMirror](https://codemirror.net). You can also view the complete source code of this component [here](https://github.com/jonataw/vuelr/tree/master/docs/.vuepress/components/examples/CodeMirror.vue).
 
-<ExampleCodeMirror />
+<ExampleCodeMirror id="example" />
 
 ## Props
 
