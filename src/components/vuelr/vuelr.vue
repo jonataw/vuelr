@@ -220,7 +220,7 @@ export default defineComponent({
         // Install inherited directives.
         Object.entries(instance?.appContext.directives || {}).forEach(
           ([name, directive]) => {
-            app.component(name, directive);
+            app.directive(name, directive);
           }
         );
 
