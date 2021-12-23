@@ -7,7 +7,8 @@ export default defineUserConfig<DefaultThemeOptions>({
     '/': {
       lang: 'en-US',
       title: 'Vuelr',
-      description: 'Vuelr is a component for live rendering Vue.js components and templates in the browser.'
+      description:
+        'Vuelr is a component for live rendering Vue.js components and templates in the browser.'
     }
   },
 
@@ -27,7 +28,8 @@ export default defineUserConfig<DefaultThemeOptions>({
             children: [
               '/getting-started/introduction.md',
               '/getting-started/installation.md',
-              '/getting-started/usage.md'
+              '/getting-started/usage.md',
+              '/getting-started/security.md'
             ]
           },
           {
