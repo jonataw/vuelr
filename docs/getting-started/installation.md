@@ -36,6 +36,8 @@ createApp(App)
   .mount('#app');
 ```
 
+If you would like to load Vuelr only when needed, instead of installing it globally, see [Load on demand](/vuelr/advanced/load-on-demand).
+
 ## Nuxt
 
 Vuelr supports Nuxt.js version `>3.0.0`.
@@ -56,5 +58,5 @@ export default defineNuxtPlugin((nuxtApp) => {
 ```
 
 ::: tip
-All plugins in your `plugins/` directory are auto-registered.
+In Nuxt, by default, all plugins in your `plugins` folder are auto-registered.
 :::

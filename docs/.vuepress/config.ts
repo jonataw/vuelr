@@ -34,7 +34,10 @@ export default defineUserConfig<DefaultThemeOptions>({
           },
           {
             text: 'Advanced',
-            children: ['/advanced/configuration.md']
+            children: [
+              '/advanced/configuration.md',
+              '/advanced/load-on-demand.md'
+            ]
           }
         ]
       }
