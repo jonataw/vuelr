@@ -5,7 +5,7 @@ Vuelr supports Vue.js version `>3.0.0`.
 To use Vuelr in your project, run the following command in your project folder:
 
 <CodeGroup>
-  <CodeGroupItem title="NPM" active>
+  <CodeGroupItem title="npm" active>
 
 ```bash:no-line-numbers
 npm install vuelr

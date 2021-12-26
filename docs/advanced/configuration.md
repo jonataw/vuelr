@@ -21,4 +21,12 @@ createApp(App)
 
 ## Default configuration
 
-@[code{2-8}](../../src/utils/default-config.ts)
+```ts
+debug: false,
+classNames: {
+  target: 'target',
+  editor: 'editor',
+  style: 'style',
+  error: 'error'
+}
+```
