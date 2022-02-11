@@ -40,7 +40,7 @@ function createVuelr(options: VuelrCreateOptions = {}): VuelrInstance {
     name: string,
     directive: Directive
   ): void {
-    const registered = app.component(name);
+    const registered = app.directive(name);
     if (!registered) {
       app.directive(name, directive);
     }
