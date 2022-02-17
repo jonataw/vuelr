@@ -40,3 +40,38 @@ table {
     padding: 0;
   }
 }
+
+html.dark {
+  .custom-container.warning {
+    p {
+      color: #e9e7d9;
+    }
+  }
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+
+  &.contained {
+    display: block;
+  }
+
+  .navbar-wrapper {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .navbar-links-wrapper {
+    position: static;
+  }
+}
+
+aside.sidebar {
+  margin-left: calc(50vw - 1280px / 2);
+  @media screen and (max-width: 1280px) {
+    margin-left: 0;
+  }
+}

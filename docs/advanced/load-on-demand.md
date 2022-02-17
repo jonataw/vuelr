@@ -1,6 +1,6 @@
 # Load on demand
 
-You can also load Vuelr on demand by importing it directly, if you don't want to register the plugin globally.
+If you don't want to register the plugin globally, you can also load Vuelr on demand by importing it directly in a component.
 
 When you import the Vuelr component directly, the [default configuration](/vuelr/advanced/configuration#default-configuration) will be used.
 
