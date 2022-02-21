@@ -6,9 +6,11 @@ import T from './components/T.vue';
 import ExampleCodeMirror from './components/examples/CodeMirror.vue';
 
 export default defineClientAppEnhance(({ app, router }) => {
-  router.addRoute({
-    path: '/',
-    redirect: '/getting-started/introduction.html'
+  router.beforeEach((to, _from, next) => {
+    if (to.path === '/') {
+      router.push('/getting-started/introduction');
+    }
+    next();
   });
 
   app.component('A', A);
