@@ -1,18 +1,19 @@
 # Vuelr
 
+[![npm](https://img.shields.io/npm/v/vuelr.svg)](https://www.npmjs.com/package/vuelr)
+[![license](https://img.shields.io/npm/l/vuelr.svg)](https://github.com/jonataw/vuelr/blob/HEAD/LICENSE)
+[![downloads](https://img.shields.io/npm/dt/vuelr)](https://www.npmjs.com/package/vuelr)
+
 Vuelr is a component for live rendering Vue.js components and templates in the browser.
 
-- [Demo](https://jonataw.github.io/vuelr/demo.html)
-- [Documentation](https://jonataw.github.io/vuelr)
+**[Demo](https://jonataw.github.io/vuelr/demo.html)**
 
 ## Installation
 
-```sh
-# NPM
-npm i vuelr
+Vuelr is available as an [npm package](https://www.npmjs.com/package/vuelr).
 
-# Yarn
-yarn add vuelr
+```bash
+npm install vuelr
 ```
 
 Import Vuelr in your Vue entry file:
@@ -30,31 +31,19 @@ createApp(App)
   .mount('#app');
 ```
 
-## Usage
+## Documentation
 
-Please visit the [Documentation](https://jonataw.github.io/vuelr) for more comprehensive instructions.
+Please refer to the [documentation](https://jonataw.github.io/vuelr) for information on how to get started.
 
-Below is a basic example to check if your Vuelr installation is working:
+## Contributing
 
-```vue
-<template>
-  <Vuelr :code="code" v-slot="{ target }">
-    <div :id="target" />
-    <textarea v-model="code" />
-  </Vuelr>
-</template>
+Feel free to contribute to Vuelr. Here are some ways you can contribute:
 
-<script lang="ts">
-export default defineComponent({
-  setup() {
-    return {
-      code: ref('<p>Hello world!</p>')
-    };
-  }
-});
-</script>
-```
+- Open bug reports
+- Open feature requests
+- Propose improvements to the documentation
+- Create Pull Requests to fix bugs or make other improvements
 
 ## License
 
-[MIT](https://opensource.org/licenses/MIT)
+This project is licensed under the terms of the [MIT](https://www.npmjs.com/package/vuelr) license.
