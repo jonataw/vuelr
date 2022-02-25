@@ -25,15 +25,9 @@ Import Vuelr in your Vue entry file:
 
 ```ts
 import { createApp } from 'vue';
-import { createVuelr, Vuelr } from 'vuelr';
+import { createVuelr } from 'vuelr';
 
-createApp(App)
-  .use(
-    createVuelr({
-      components: [Vuelr]
-    })
-  )
-  .mount('#app');
+createApp(App).use(createVuelr()).mount('#app');
 ```
 
 If you would like to load Vuelr only when needed, instead of installing it globally, see [Load on demand](/vuelr/advanced/load-on-demand).
@@ -46,14 +40,10 @@ Add `plugins/vuelr.ts` to you project with the following content:
 
 ```ts
 import { defineNuxtPlugin } from '#app';
-import { createVuelr, Vuelr } from 'vuelr';
+import { createVuelr } from 'vuelr';
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.use(
-    createVuelr({
-      components: [Vuelr]
-    })
-  );
+  nuxtApp.vueApp.use(createVuelr());
 });
 ```
 

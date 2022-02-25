@@ -10,7 +10,6 @@ This page is not complete.
 createApp(App)
   .use(
     createVuelr({
-      components: [Vuelr],
       config: {
         // - Options here -
       }
@@ -23,10 +22,8 @@ createApp(App)
 
 ```ts
 debug: false,
-classNames: {
-  target: 'target',
-  editor: 'editor',
-  style: 'style',
-  error: 'error'
-}
+targetClassName: 'target',
+editorClassName: 'editor',
+styleClassName: 'style',
+errorClassName: 'error'
 ```

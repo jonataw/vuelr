@@ -1,11 +1,9 @@
 const config = {
   debug: false,
-  classNames: {
-    target: 'target',
-    editor: 'editor',
-    style: 'style',
-    error: 'error'
-  },
+  targetClassName: 'target',
+  editorClassName: 'editor',
+  styleClassName: 'style',
+  errorClassName: 'error'
 };
 
 export default config;

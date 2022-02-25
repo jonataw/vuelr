@@ -1,5 +1,5 @@
 import { defineClientAppEnhance } from '@vuepress/client';
-import { createVuelr, Vuelr } from '../../src';
+import { createVuelr } from '../../src';
 
 import A from './components/A.vue';
 import T from './components/T.vue';
@@ -17,11 +17,7 @@ export default defineClientAppEnhance(({ app, router }) => {
   app.component('T', T);
   app.component('ExampleCodeMirror', ExampleCodeMirror);
 
-  app.use(
-    createVuelr({
-      components: [Vuelr]
-    })
-  );
+  app.use(createVuelr());
 });
 
 import './plugins/container';

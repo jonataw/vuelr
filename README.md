@@ -20,15 +20,9 @@ Import Vuelr in your Vue entry file:
 
 ```ts
 import { createApp } from 'vue';
-import { createVuelr, Vuelr } from 'vuelr';
+import { createVuelr } from 'vuelr';
 
-createApp(App)
-  .use(
-    createVuelr({
-      components: [Vuelr]
-    })
-  )
-  .mount('#app');
+createApp(App).use(createVuelr()).mount('#app');
 ```
 
 ## Documentation

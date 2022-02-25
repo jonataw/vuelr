@@ -79,11 +79,10 @@ export default defineComponent({
     const STYLE_REGEXP = /<style>([\s\S]*)<\/style>/;
 
     const parseConfig = () => {
-      const classNames = config.value.classNames;
-      const TARGET_ID = `${target}-${classNames.target}`;
-      const EDITOR_ID = `${target}-${classNames.editor}`;
-      const STYLE_ID = `${target}-${classNames.style}`;
-      const ERROR_ID = `${target}-${classNames.error}`;
+      const TARGET_ID = `${target}-${config.value.targetClassName}`;
+      const EDITOR_ID = `${target}-${config.value.editorClassName}`;
+      const STYLE_ID = `${target}-${config.value.styleClassName}`;
+      const ERROR_ID = `${target}-${config.value.errorClassName}`;
 
       return {
         TARGET_ID,
