@@ -38,5 +38,10 @@ export default defineConfig({
         exports: 'named'
       }
     }
+  },
+  test: {
+    reporters: 'verbose',
+    globals: true,
+    environment: 'happy-dom'
   }
 });

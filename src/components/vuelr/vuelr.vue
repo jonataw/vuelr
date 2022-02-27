@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="ready && hasSlot('default')"
+    v-if="hasSlot('default')"
     :id="target"
     :class="`${target}-slot`"
   >
@@ -15,7 +15,7 @@
       }"
     />
   </div>
-  <div v-else-if="ready" :id="target">
+  <div v-else :id="target">
     <div :id="TARGET_ID" />
     <div v-if="error" v-text="error" />
     <textarea
@@ -248,7 +248,6 @@ export default defineComponent({
     };
 
     return {
-      ready,
       target,
       compiledStyle,
       compiledScript,
