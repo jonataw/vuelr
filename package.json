@@ -1,6 +1,6 @@
 {
   "name": "vuelr",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Live editing of Vue components.",
   "author": {
     "email": "jonatan.wackstrom@gmail.com",
