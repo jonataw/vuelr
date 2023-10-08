@@ -1,15 +1,16 @@
 <template>
-  <Vuelr :code="code" v-slot="{ target }" class="flex">
+  <Vuelr v-if="mounted" :code="code" v-slot="{ target }" class="flex">
     <div :id="target" class="preview" />
     <textarea v-model="code" />
   </Vuelr>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 
 export default defineComponent({
   setup() {
+    const mounted = ref(false);
     const code = ref(`<template>
   <div>
     <h5>Hello {{name}}!</h5>
@@ -39,7 +40,9 @@ h5 {
 }
 </style>`);
 
-    return { code };
+    onMounted(() => (mounted.value = true));
+
+    return { code, mounted };
   },
 });
 </script>
