@@ -1,52 +1,48 @@
 # Installation
 
-Vuelr supports Vue.js version `>3.0.0`.
+Vue is a peer dependency of Vuelr. Vuelr requires Vue `^3.0.0`. 
 
-To use Vuelr in your project, run the following command in your project folder:
+Vuelr is available as an [npm package](https://www.npmjs.com/package/vuelr).
 
-<CodeGroup>
-  <CodeGroupItem title="npm" active>
+::: code-group
 
-```bash:no-line-numbers
+```bash [npm]
 npm install vuelr
 ```
 
-  </CodeGroupItem>
-  <CodeGroupItem title="Yarn">
-  
-```bash:no-line-numbers
+```bash [pnpm]
+pnpm add vuelr
+```
+
+```bash [yarn]
 yarn add vuelr
 ```
 
-  </CodeGroupItem>
-</CodeGroup>
+::::
 
-Import Vuelr in your Vue entry file:
+
+The `createVuelr` function returns a plugin object that can be passed to
+`app.use`. The plugin registers the `<Vuelr>` component globally to your app.
 
 ```ts
 import { createApp } from 'vue';
 import { createVuelr } from 'vuelr';
 
-createApp(App).use(createVuelr()).mount('#app');
+createApp(App)
+  .use(createVuelr())
+  .mount('#app');
 ```
 
-If you would like to load Vuelr only when needed, instead of installing it globally, see [Load on demand](/vuelr/advanced/load-on-demand).
 
-## Nuxt
-
-Vuelr supports Nuxt.js version `>3.0.0`.
-
-Add `plugins/vuelr.ts` to you project with the following content:
-
+You can also import the `<Vuelr>` component itself:
+  
 ```ts
-import { defineNuxtPlugin } from '#app';
-import { createVuelr } from 'vuelr';
+import { Vuelr } from 'vuelr';
 
-export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.use(createVuelr());
+defineComponent({
+  components: {
+    Vuelr,
+  },
 });
 ```
 
-::: tip
-In Nuxt, by default, all plugins in your `plugins` folder are auto-registered.
-:::
