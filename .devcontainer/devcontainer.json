@@ -1,0 +1,28 @@
+{
+  "image": "node:18",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "EditorConfig.EditorConfig",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "Vue.volar"
+      ],
+      "settings": {
+        "remote.autoForwardPorts": false,
+        "search.exclude": {
+          ".gitignore": true,
+          "package-lock.json": true,
+          "dist/**": true
+        },
+        "editor.codeActionsOnSave": [
+          "source.organizeImports",
+          "source.fixAll.eslint"
+        ],
+        "editor.foldingImportsByDefault": true
+      }
+    }
+  },
+  "postCreateCommand": "npm install",
+  "remoteUser": "node"
+}

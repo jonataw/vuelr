@@ -6,7 +6,7 @@
 
 Vuelr is a component for live rendering Vue.js components and templates in the browser.
 
-**[Demo](https://jonataw.github.io/vuelr/demo.html)**
+[Demo](https://jonataw.github.io/vuelr/demo.html) | [Documentation](https://jonataw.github.io/vuelr)
 
 ## Installation
 
@@ -25,19 +25,27 @@ import { createVuelr } from 'vuelr';
 createApp(App).use(createVuelr()).mount('#app');
 ```
 
-## Documentation
+## Usage
 
-Please refer to the [documentation](https://jonataw.github.io/vuelr) for information on how to get started.
+```vue
+<template>
+  <Vuelr :code="code" v-slot="{ target }">
+    <div :id="target" />
+    <textarea v-model="code" />
+  </Vuelr>
+</template>
 
-## Contributing
-
-Feel free to contribute to Vuelr. Here are some ways you can contribute:
-
-- Open bug reports
-- Open feature requests
-- Propose improvements to the documentation
-- Create Pull Requests to fix bugs or make other improvements
+<script lang="ts">
+export default defineComponent({
+  setup() {
+    return {
+      code: ref('<p>Hello world!</p>'),
+    };
+  },
+});
+</script>
+```
 
 ## License
 
-This project is licensed under the terms of the [MIT](https://www.npmjs.com/package/vuelr) license.
+This project is licensed under the [MIT](https://www.npmjs.com/package/vuelr) license.

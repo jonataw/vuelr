@@ -1,6 +1,6 @@
 {
   "name": "vuelr",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Live editing of Vue components.",
   "author": {
     "email": "jonatan.wackstrom@gmail.com",
@@ -17,12 +17,6 @@
     "type": "git",
     "url": "https://github.com/jonataw/vuelr.git"
   },
-  "main": "dist/vuelr.umd.js",
-  "module": "dist/vuelr.es.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "keywords": [
     "vue",
     "live",
@@ -30,41 +24,51 @@
     "component",
     "vue3"
   ],
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/vuelr.mjs",
+  "module": "./dist/vuelr.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/vuelr.mjs"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
   "scripts": {
-    "build": "cross-env NODE_ENV=production node build/pre-build && vite build --config build/vite.config.js && tsc --declaration --emitDeclarationOnly && node build/post-build",
-    "docs:deploy": "build/deploy-docs.sh",
-    "docs:deploy:win": ".\\build\\deploy-docs.sh",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
+    "build": "ts-node --esm --project tsconfig.build.json build/before.ts && vite build --config build/vite.config.ts && tsc --project tsconfig.build.json --declaration --emitDeclarationOnly && ts-node --esm --project tsconfig.build.json build/after.ts",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "docs:deploy": "scripts/deploy-docs.sh",
     "lint": "eslint --fix .",
-    "publish:npm": "npm i && npm run build && npm publish",
-    "test": "vitest --config ./build/vite.config.js"
+    "test": "vitest --config ./build/vite.config.ts",
+    "publish:npm": "npm ci && npm run build && npm publish"
   },
   "devDependencies": {
-    "@babel/types": "^7.16.0",
-    "@types/codemirror": "^5.60.2",
-    "@types/fs-extra": "^9.0.12",
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "@typescript-eslint/parser": "^5.0.0",
-    "@vitejs/plugin-vue": "^1.10.1",
-    "@vue/eslint-config-prettier": "^6.0.0",
-    "@vue/eslint-config-typescript": "^9.1.0",
-    "@vue/test-utils": "^2.0.0-rc.17",
-    "chalk": "^4.1.2",
-    "codemirror": "^5.64.0",
-    "cross-env": "^7.0.3",
-    "eslint": "^8.0.0",
-    "eslint-plugin-prettier": "^3.3.1",
-    "eslint-plugin-vue": "^8.0.1",
-    "fs-extra": "^10.0.0",
-    "happy-dom": "^2.41.0",
-    "rimraf": "^3.0.2",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
+    "@vitejs/plugin-vue": "^4.4.0",
+    "@vitejs/plugin-vue-jsx": "^3.0.2",
+    "@vue/eslint-config-prettier": "^8.0.0",
+    "@vue/eslint-config-typescript": "^12.0.0",
+    "@vue/test-utils": "^2.4.1",
+    "chalk": "^5.3.0",
+    "eslint": "^8.50.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-vue": "^9.17.0",
+    "happy-dom": "^12.4.0",
     "sass-loader": "^10.2.0",
-    "typescript": "^4.5.2",
-    "vite": "^2.6.14",
-    "vitest": "^0.5.3",
-    "vue": "^3.2.23",
-    "vue-router": "^4.0.12",
-    "vuepress": "^2.0.0-beta.27"
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.9",
+    "vitepress": "^1.0.0-rc.20",
+    "vitest": "^0.34.6",
+    "vue": "^3.3.4"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
   }
 }
